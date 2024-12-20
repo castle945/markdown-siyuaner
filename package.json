@@ -8,6 +8,7 @@
 	"engines": {
 		"vscode": "^1.64.0"
 	},
+
 	"keywords": ["markdown"],
 	"categories": [
 		"Visualization",
@@ -21,31 +22,12 @@
 		"type": "git",
 		"url": "https://github.com/castle945/markdown-siyuaner"
 	},
+	
 	"activationEvents": [
 		"onStartupFinished"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
-		"themes": [
-			{
-				"label": "One Dark Modern",
-				"uiTheme": "vs-dark",
-				"path": "./theme/onedark-modern.json"
-			},
-			{
-				"label": "One Dark Modern Classic",
-				"uiTheme": "vs-dark",
-				"path": "./theme/onedark-modern-classic.json"
-			}
-		],
-		"iconThemes": [
-			{
-				"id": "office-material-icon-theme",
-				"label": "Office Material Icon Theme",
-				"path": "./theme/material-icons.json",
-				"_watch": true
-			}
-		],
 		"languages": [
 			{
 				"id": "reg",
