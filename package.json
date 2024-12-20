@@ -1,32 +1,25 @@
 {
-	"name": "vscode-office",
-	"displayName": "Office Viewer(Markdown Editor)",
-	"description": "View word,excel files and using WYSIWYG editor for markdown.",
-	"version": "3.4.8",
-	"publisher": "cweijan",
+	"name": "markdown-siyuaner",
+	"displayName": "Markdown-SiYuaner",
+	"description": "一名思源笔记用户的自用 Markdown 插件",
+	"version": "0.0.2",
+	"publisher": "city945",
 	"icon": "images/icon.png",
 	"engines": {
 		"vscode": "^1.64.0"
 	},
-	"keywords": [
-		"pdf",
-		"word",
-		"markdown",
-		"xlsx",
-		"excel"
-	],
+	"keywords": ["markdown"],
 	"categories": [
 		"Visualization",
 		"Other"
 	],
 	"bugs": {
-		"url": "https://github.com/cweijan/vscode-office/issues",
+		"url": "https://github.com/castle945/markdown-siyuaner/issues",
 		"email": "cweijan@163.com"
 	},
-	"homepage": "https://github.com/cweijan/vscode-office/blob/master/README.md",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/cweijan/vscode-office.git"
+		"url": "https://github.com/castle945/markdown-siyuaner"
 	},
 	"activationEvents": [
 		"onStartupFinished"
