@@ -4,7 +4,6 @@ import { extname } from 'path';
 import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
 import { Util } from '../common/util';
-import { handleClass } from './handlers/classHandler';
 import { handleImage, isImage } from './handlers/imageHanlder';
 import { handleZip } from './handlers/zipHandler';
 
@@ -20,7 +19,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
     }
 
     bindCustomEditors(viewOption: { webviewOptions: vscode.WebviewPanelOptions }) {
-        const viewers = ['cweijan.officeViewer', 'cweijan.imageViewer', 'cweijan.htmlViewer', 'cweijan.classViewer']
+        const viewers = ['cweijan.officeViewer', 'cweijan.imageViewer', 'cweijan.htmlViewer']
         return viewers.map(viewer => vscode.window.registerCustomEditorProvider(viewer, this, viewOption))
     }
 
@@ -70,7 +69,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".dotx":
                 route = 'word'
                 break;
-            case ".jar":
             case ".zip":
             case ".apk":
             case ".vsix":
@@ -86,9 +84,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".pdf":
                 webview.html = readFileSync(this.extensionPath + "/resource/pdf/viewer.html", 'utf8')
                     .replace("{{baseUrl}}", this.getBaseUrl(webview, 'pdf'))
-                break;
-            case ".class":
-                handleClass(uri, webviewPanel);
                 break;
             case ".htm":
             case ".html":

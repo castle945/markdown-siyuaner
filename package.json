@@ -346,9 +346,6 @@
 						"filenamePattern": "*.otf"
 					},
 					{
-						"filenamePattern": "*.jar"
-					},
-					{
 						"filenamePattern": "*.zip"
 					},
 					{
@@ -430,15 +427,6 @@
 					},
 					{
 						"filenamePattern": "*.htm"
-					}
-				]
-			},
-			{
-				"viewType": "cweijan.classViewer",
-				"displayName": "Java Decompiler",
-				"selector": [
-					{
-						"filenamePattern": "file:/**/*.class"
 					}
 				]
 			}
