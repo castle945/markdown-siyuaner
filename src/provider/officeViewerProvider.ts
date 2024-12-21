@@ -4,7 +4,6 @@ import { extname } from 'path';
 import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
 import { Util } from '../common/util';
-import { handleImage, isImage } from './handlers/imageHanlder';
 import { handleZip } from './handlers/zipHandler';
 
 export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider {
@@ -47,10 +46,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
 
         let route: string;
         const ext = extname(uri.fsPath).toLowerCase()
-        if (isImage(ext)) {
-            handleImage(handler, uri, webview)
-            route = 'image'
-        }
         switch (ext) {
             case ".xlsx":
             case ".xlsm":
