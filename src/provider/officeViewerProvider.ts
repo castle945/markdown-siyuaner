@@ -4,7 +4,6 @@ import { extname } from 'path';
 import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
 import { Util } from '../common/util';
-import { handleZip } from './handlers/zipHandler';
 
 export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider {
 
@@ -57,13 +56,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".docx":
             case ".dotx":
                 route = 'word'
-                break;
-            // apk/vsix 本质上都是 zip 文件
-            case ".zip":
-            case ".apk":
-            case ".vsix":
-                route = 'zip';
-                handleZip(uri, handler);
                 break;
             case ".ttf":
             case ".woff":
