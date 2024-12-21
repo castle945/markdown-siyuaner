@@ -314,9 +314,6 @@
 						"filenamePattern": "*.dotx"
 					},
 					{
-						"filenamePattern": "*.pdf"
-					},
-					{
 						"filenamePattern": "*.ttf"
 					},
 					{

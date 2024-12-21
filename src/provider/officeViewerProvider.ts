@@ -63,10 +63,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".otf":
                 route = 'font';
                 break;
-            case ".pdf":
-                webview.html = readFileSync(this.extensionPath + "/resource/pdf/viewer.html", 'utf8')
-                    .replace("{{baseUrl}}", this.getBaseUrl(webview, 'pdf'))
-                break;
             case ".htm":
             case ".html":
                 webview.html = Util.buildPath(readFileSync(uri.fsPath, 'utf8'), webview, folderPath.fsPath);
@@ -80,11 +76,4 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         }
         if (route) return ReactApp.view(webview, { route })
     }
-
-    private getBaseUrl(webview: vscode.Webview, path: string) {
-        const baseUrl = webview.asWebviewUri(vscode.Uri.file(`${this.extensionPath}/resource/${path}`))
-            .toString().replace(/\?.+$/, '').replace('https://git', 'https://file')
-        return baseUrl;
-    }
-
 }
