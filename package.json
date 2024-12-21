@@ -30,18 +30,6 @@
 	"contributes": {
 		"languages": [
 			{
-				"id": "reg",
-				"aliases": [
-					"REG",
-					"reg"
-				],
-				"extensions": [
-					".reg",
-					".REG"
-				],
-				"configuration": "./syntaxes/reg-language-configuration.json"
-			},
-			{
 				"id": "http",
 				"aliases": [
 					"HTTP",
@@ -57,11 +45,6 @@
 			}
 		],
 		"grammars": [
-			{
-				"language": "reg",
-				"scopeName": "source.reg",
-				"path": "./syntaxes/reg.tmLanguage"
-			},
 			{
 				"language": "http",
 				"scopeName": "source.http",
@@ -171,10 +154,6 @@
 				"command": "rest-client.unfold-response",
 				"title": "Unfold Response",
 				"category": "Rest Client"
-			},
-			{
-				"command": "office.reg.jumpToKey",
-				"title": "REG: Jump to registry key"
 			},
 			{
 				"command": "office.markdown.switch",
