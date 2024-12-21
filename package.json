@@ -78,45 +78,6 @@
 		},
 		"customEditors": [
 			{
-				"viewType": "cweijan.officeViewer",
-				"displayName": "Office Viewer",
-				"selector": [
-					{
-						"filenamePattern": "*.xlsx"
-					},
-					{
-						"filenamePattern": "*.xlsm"
-					},
-					{
-						"filenamePattern": "*.csv"
-					},
-					{
-						"filenamePattern": "*.xls"
-					},
-					{
-						"filenamePattern": "*.ods"
-					},
-					{
-						"filenamePattern": "*.docx"
-					},
-					{
-						"filenamePattern": "*.dotx"
-					},
-					{
-						"filenamePattern": "*.ttf"
-					},
-					{
-						"filenamePattern": "*.woff"
-					},
-					{
-						"filenamePattern": "*.woff2"
-					},
-					{
-						"filenamePattern": "*.otf"
-					}
-				]
-			},
-			{
 				"viewType": "cweijan.markdownViewer",
 				"displayName": "Markdown Editor",
 				"selector": [
