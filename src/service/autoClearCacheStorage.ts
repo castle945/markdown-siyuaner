@@ -4,6 +4,7 @@ import { homedir } from "os";
 import { join } from "path";
 
 /*
+// @tag delete 不会使用旧版
 旧版本的VS Code每次打开webview都会对资源文件进行缓存, 导致占用大量空间, 新版本不会再重复缓存, 因此不再需要自动清理了.
 缓存路径:
 - Windows: C:\Users\<userid>\AppData\Roaming\Code\Service Worker\CacheStorage

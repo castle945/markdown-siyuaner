@@ -7,9 +7,6 @@ import { Util } from '../common/util';
 import { handleImage, isImage } from './handlers/imageHanlder';
 import { handleZip } from './handlers/zipHandler';
 
-/**
- * support view office files
- */
 export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider {
 
     private extensionPath: string;
@@ -30,6 +27,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             localResourceRoots: [vscode.Uri.file(this.extensionPath), folderPath]
         }
 
+        // 定义一条 "open" 事件
         const send = () => {
             handler.emit("open", {
                 ext: extname(uri.fsPath),
@@ -37,6 +35,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             })
         }
 
+        // 各种事件的钩子函数
         const handler = Handler.bind(webviewPanel, uri)
             .on("editInVSCode", (full: boolean) => {
                 const side = full ? vscode.ViewColumn.Active : vscode.ViewColumn.Beside;
@@ -64,6 +63,7 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".dotx":
                 route = 'word'
                 break;
+            // apk/vsix 本质上都是 zip 文件
             case ".zip":
             case ".apk":
             case ".vsix":

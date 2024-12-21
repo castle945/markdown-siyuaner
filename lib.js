@@ -1,3 +1,4 @@
+// @tag delete: 无用代码，似乎是 build.ts 的冗余
 const { build } = require("esbuild");
 const { resolve } = require("path");
 const { existsSync } = require("fs");

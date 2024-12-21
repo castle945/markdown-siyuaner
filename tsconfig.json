@@ -1,15 +1,22 @@
 {
+	// TypeScript 编译选项
 	"compilerOptions": {
+		// 模块解析策略为 Node.js 下的 CommonJS 浏览器端是 ES
 		"module": "commonjs",
+		// 编译后的 JS 代码版本
 		"target": "es2019",
+		// 编译后的 JS 代码输出目录
 		"outDir": "out",
+		// 启用实验性的装饰器特性
 		"experimentalDecorators": true,
 		"lib": [
 			"es6",
 			"es2017",
 			"es2019"
 		],
+		// 生成 source map 文件，用于调试，它能映射编译后的代码回到原始的 TypeScript 文件
 		"sourceMap": true,
+		// 模块解析路径，使用 @ 可以引用项目根目录下的 src 目录中的模块
 		"paths": {
             "@/*": [
                 "./src/*"
@@ -19,6 +26,7 @@
         "esModuleInterop": true,
 		"strict": false 
 	},
+	// 不参与编译的文件或目录
 	"exclude": [
 		"src/react",
 		"node_modules",
