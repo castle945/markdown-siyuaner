@@ -1,9 +1,7 @@
 import { ReactApp } from '@/common/reactApp';
-import { readFileSync } from 'fs';
 import { extname } from 'path';
 import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
-import { Util } from '../common/util';
 
 export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider {
 
@@ -62,13 +60,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
             case ".woff2":
             case ".otf":
                 route = 'font';
-                break;
-            case ".htm":
-            case ".html":
-                webview.html = Util.buildPath(readFileSync(uri.fsPath, 'utf8'), webview, folderPath.fsPath);
-                Util.listen(webviewPanel, uri, () => {
-                    webviewPanel.webview.html = Util.buildPath(readFileSync(uri.fsPath, 'utf8'), webviewPanel.webview, folderPath.fsPath);
-                })
                 break;
             default:
                 if (route) break;

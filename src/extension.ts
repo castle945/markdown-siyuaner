@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { MarkdownEditorProvider } from './provider/markdownEditorProvider';
 import { OfficeViewerProvider } from './provider/officeViewerProvider';
-import { HtmlService } from './service/htmlService';
 import { MarkdownService } from './service/markdownService';
 import { FileUtil } from './common/fileUtil';
 import { ReactApp } from './common/reactApp';
@@ -18,7 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('office.quickOpen', () => vscode.commands.executeCommand('workbench.action.quickOpen')),
 		vscode.commands.registerCommand('office.markdown.switch', (uri) => { markdownService.switchEditor(uri) }),
 		vscode.commands.registerCommand('office.markdown.paste', () => { markdownService.loadClipboardImage() }),
-		vscode.commands.registerCommand('office.html.preview', uri => HtmlService.previewHtml(uri, context)),
 		// 注册自定义编辑器
 		vscode.window.registerCustomEditorProvider("cweijan.markdownViewer", new MarkdownEditorProvider(context), viewOption),
 		vscode.window.registerCustomEditorProvider("cweijan.officeViewer", new OfficeViewerProvider(context), viewOption),

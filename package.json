@@ -46,10 +46,6 @@
 			{
 				"command": "office.markdown.paste",
 				"title": "Enhance pater in markdown"
-			},
-			{
-				"command": "office.html.preview",
-				"title": "Preview HTML"
 			}
 		],
 		"keybindings": [
@@ -58,11 +54,6 @@
 				"key": "ctrl+v",
 				"mac": "cmd+v",
 				"when": "!terminalFocus && !filesExplorerFocus && resourceLangId == markdown"
-			},
-			{
-				"command": "office.html.preview",
-				"key": "ctrl+shift+v",
-				"when": "editorTextFocus && editorLangId == html"
 			},
 			{
 				"command": "office.markdown.switch",
@@ -83,13 +74,6 @@
 					"when": "resourceExtname == '.md'",
 					"group": "navigation@-2"
 				}
-			],
-			"editor/context": [
-				{
-					"command": "office.html.preview",
-					"group": "navigation@1",
-					"when": "editorTextFocus && editorLangId == html"
-				}
 			]
 		},
 		"customEditors": [
@@ -97,10 +81,6 @@
 				"viewType": "cweijan.officeViewer",
 				"displayName": "Office Viewer",
 				"selector": [
-					{
-						"filenamePattern": "*.html"
-					},
-
 					{
 						"filenamePattern": "*.xlsx"
 					},
