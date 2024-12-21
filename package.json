@@ -310,6 +310,49 @@
 				"displayName": "Office Viewer",
 				"selector": [
 					{
+						"filenamePattern": "*.html"
+					},
+					{
+						"filenamePattern": "*.jpg"
+					},
+					{
+						"filenamePattern": "*.png"
+					},
+					{
+						"filenamePattern": "*.gif"
+					},
+					{
+						"filenamePattern": "*.apng"
+					},
+					{
+						"filenamePattern": "*.apng"
+					},
+					{
+						"filenamePattern": "*.bmp"
+					},
+					{
+						"filenamePattern": "*.ico"
+					},
+					{
+						"filenamePattern": "*.cur"
+					},
+					{
+						"filenamePattern": "*.jpeg"
+					},
+					{
+						"filenamePattern": "*.pjpeg"
+					},
+					{
+						"filenamePattern": "*.pjp"
+					},
+					{
+						"filenamePattern": "*.tif"
+					},
+					{
+						"filenamePattern": "*.webp"
+					},
+
+					{
 						"filenamePattern": "*.xlsx"
 					},
 					{
@@ -360,73 +403,11 @@
 				]
 			},
 			{
-				"viewType": "cweijan.imageViewer",
-				"displayName": "Image Preview(Office Viewer)",
-				"priority": "option",
-				"selector": [
-					{
-						"filenamePattern": "*.jpg"
-					},
-					{
-						"filenamePattern": "*.png"
-					},
-					{
-						"filenamePattern": "*.gif"
-					},
-					{
-						"filenamePattern": "*.apng"
-					},
-					{
-						"filenamePattern": "*.apng"
-					},
-					{
-						"filenamePattern": "*.bmp"
-					},
-					{
-						"filenamePattern": "*.ico"
-					},
-					{
-						"filenamePattern": "*.cur"
-					},
-					{
-						"filenamePattern": "*.jpeg"
-					},
-					{
-						"filenamePattern": "*.pjpeg"
-					},
-					{
-						"filenamePattern": "*.pjp"
-					},
-					{
-						"filenamePattern": "*.tif"
-					},
-					{
-						"filenamePattern": "*.webp"
-					}
-				]
-			},
-			{
 				"viewType": "cweijan.markdownViewer",
 				"displayName": "Markdown Editor",
 				"selector": [
 					{
 						"filenamePattern": "*.md"
-					},
-					{
-						"filenamePattern": "*.markdown"
-					}
-				]
-			},
-			{
-				"viewType": "cweijan.htmlViewer",
-				"displayName": "Html Viewer",
-				"priority": "option",
-				"selector": [
-					{
-						"filenamePattern": "*.html"
-					},
-					{
-						"filenamePattern": "*.htm"
 					}
 				]
 			}

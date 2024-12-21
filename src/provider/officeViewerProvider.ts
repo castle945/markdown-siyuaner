@@ -18,11 +18,6 @@ export class OfficeViewerProvider implements vscode.CustomReadonlyEditorProvider
         this.extensionPath = context.extensionPath;
     }
 
-    bindCustomEditors(viewOption: { webviewOptions: vscode.WebviewPanelOptions }) {
-        const viewers = ['cweijan.officeViewer', 'cweijan.imageViewer', 'cweijan.htmlViewer']
-        return viewers.map(viewer => vscode.window.registerCustomEditorProvider(viewer, this, viewOption))
-    }
-
     public openCustomDocument(uri: vscode.Uri, openContext: vscode.CustomDocumentOpenContext, token: vscode.CancellationToken): vscode.CustomDocument | Thenable<vscode.CustomDocument> {
         return { uri, dispose: (): void => { } };
     }
