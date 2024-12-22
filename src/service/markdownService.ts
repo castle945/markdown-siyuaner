@@ -4,7 +4,10 @@ import { fileTypeFromFile } from 'file-type';
 import { copyFileSync, existsSync, lstatSync, mkdirSync, renameSync } from 'fs';
 import path, { dirname, extname, isAbsolute, join, parse } from 'path';
 import * as vscode from 'vscode';
-import { Holder } from './markdown/holder';
+
+export class Holder{
+    public static activeDocument:vscode.TextDocument|null;
+}
 
 export class MarkdownService {
 

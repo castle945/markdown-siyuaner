@@ -4,8 +4,7 @@ import { basename, isAbsolute, parse, resolve } from 'path';
 import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
 import { Util } from '../common/util';
-import { Holder } from '../service/markdown/holder';
-import { MarkdownService } from '../service/markdownService';
+import { MarkdownService, Holder } from '../service/markdownService';
 import { Global } from '@/common/global';
 import { platform } from 'os';
 
@@ -146,10 +145,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             // 如果没定义 markdown 主题则弹出主题选择框，选择后再发送 'theme' 事件并更新全局配置项
             if (!theme) {
                 const themes = [
-                    "Auto", "|",
-                    "Light", "Solarized", "Warm Light", "Dim Light", "|",
-                    "One Dark", "Github Dark",
-                    "Nord", "Monokai", "Dracula",
+                    "Light", "Solarized", "Warm Light",
                 ];
                 const editorTheme = Global.getConfig('editorTheme');
                 const themeItems: vscode.QuickPickItem[] = themes.map(theme => {
