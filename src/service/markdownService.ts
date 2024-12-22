@@ -1,92 +1,16 @@
 import { adjustImgPath } from "@/common/fileUtil";
-import { Output } from "@/common/Output";
 import { spawn } from 'child_process';
-import chromeFinder from 'chrome-finder';
 import { fileTypeFromFile } from 'file-type';
 import { copyFileSync, existsSync, lstatSync, mkdirSync, renameSync } from 'fs';
-import { homedir } from 'os';
 import path, { dirname, extname, isAbsolute, join, parse } from 'path';
 import * as vscode from 'vscode';
 import { Holder } from './markdown/holder';
-import { convertMd } from "./markdown/markdown-pdf";
-import { Global } from "@/common/global";
-
-export type ExportType = 'pdf' | 'html' | 'docx';
-
-interface ExportOption {
-    type?: ExportType;
-    withoutOutline?: boolean;
-}
 
 export class MarkdownService {
 
     constructor(private context: vscode.ExtensionContext) {
     }
 
-    /**
-     * export markdown to another type
-     * @param type pdf, html, docx 
-     */
-    public async exportMarkdown(uri: vscode.Uri, option: ExportOption = {}) {
-        const { type = 'pdf' } = option;
-        try {
-            if (type != 'html') { // html导出速度快, 无需等待
-                vscode.window.showInformationMessage(`Starting export markdown to ${type}.`)
-            }
-            await convertMd({ markdownFilePath: uri.fsPath, config: this.getConfig(option) })
-            vscode.window.showInformationMessage(`Export markdown to ${type} success!`)
-        } catch (error) {
-            Output.log(error)
-        }
-    }
-
-    public getConfig(option: ExportOption) {
-        const top = Global.getConfig("pdfMarginTop")
-        const { type = 'pdf', withoutOutline = false } = option;
-        return {
-            type,
-            "styles": [],
-            withoutOutline,
-            // chromium path
-            "executablePath": this.getChromiumPath(),
-            // Set `true` to convert `\n` in paragraphs into `<br>`.
-            "breaks": false,
-            // pdf print option
-            "printBackground": true,
-            format: "A4",
-            margin: { top }
-        };
-    }
-
-    private paths: string[] = [
-        "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
-        "C:\\Program Files (x86)\\Microsoft\\Edge Beta\\Application\\msedge.exe",
-        "C:\\Program Files (x86)\\Microsoft\\Edge Dev\\Application\\msedge.exe",
-        join(homedir(), "AppData\\Local\\Microsoft\\Edge SxS\\Application\\msedge.exe"),
-        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-        '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
-        "/usr/bin/microsoft-edge",
-    ]
-
-    private getChromiumPath() {
-        const chromiumPath = Global.getConfig<string>("chromiumPath")
-        const paths = [chromiumPath, ...this.paths]
-        for (const path of paths) {
-            if (existsSync(path)) {
-                console.debug(`using chromium path is ${path}`)
-                return path;
-            }
-        }
-        try {
-            const chromePath = chromeFinder();
-            console.debug(`using chrome path is ${chromePath}`)
-            return chromePath;
-        } catch (e) {
-            const msg = "Not chromium found, export fail.";
-            vscode.window.showErrorMessage(msg)
-            throw new Error(msg)
-        }
-    }
 
     public async loadClipboardImage() {
 

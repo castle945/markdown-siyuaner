@@ -102,15 +102,6 @@
 					"default": false,
 					"description": "Support view absolute path image from markdown viewer."
 				},
-				"vscode-office.chromiumPath": {
-					"type": "string",
-					"description": "Set the chromium browser location for exporting markdown pdf."
-				},
-				"vscode-office.pdfMarginTop": {
-					"type": "integer",
-					"default": 25,
-					"description": "Printed pdf default top margin."
-				},
 				"vscode-office.openOutline": {
 					"type": "boolean",
 					"default": true,
@@ -249,7 +240,6 @@
 		"antd": "^5.15.4",
 		"axios": "^1.4.0",
 		"cheerio": "^1.0.0",
-		"chrome-finder": "^1.0.7",
 		"date-format": "^4.0.14",
 		"docx-preview": "^0.3.0",
 		"file-type": "^19.6.0",

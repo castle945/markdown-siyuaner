@@ -141,9 +141,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             await this.updateTextDocument(document, content)
             this.updateCount(content)
             vscode.commands.executeCommand('workbench.action.files.save');
-        }).on("export", (option) => {
-            vscode.commands.executeCommand('workbench.action.files.save');
-            new MarkdownService(this.context).exportMarkdown(uri, option)
         }).on("theme", async (theme) => {
             // 顶栏主题设置按钮
             // 如果没定义 markdown 主题则弹出主题选择框，选择后再发送 'theme' 事件并更新全局配置项

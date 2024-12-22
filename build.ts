@@ -35,15 +35,6 @@ function main() {
         },
         // 使用插件来复制静态文件并提供构建开始和结束的通知
         plugins: [
-            // 复制生成pdf的静态文件
-            copy({
-                resolveFrom: 'out',
-                assets: {
-                    from: ['./template/**/*'],
-                    to: ['./'],
-                    keepStructure: true
-                },
-            }),
             {
                 name: 'build notice',
                 setup(build) {
