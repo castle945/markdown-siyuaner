@@ -75,8 +75,7 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 5739
   },
-  // 空字符串表示以相对路径形式引用资源文件
-  base: '',
+  root: './resource/vditor',
   // 指定构建输出目录和代码块大小阈值
   build: {
     outDir: 'out/webview',

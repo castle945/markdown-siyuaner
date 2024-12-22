@@ -136,12 +136,4 @@ export class MarkdownService {
             });
         }
     }
-
-    public switchEditor(uri: vscode.Uri) {
-        const editor = vscode.window.activeTextEditor;
-        if (!uri) uri = editor?.document.uri;
-        const type = editor ? 'cweijan.markdownViewer' : 'default';
-        vscode.commands.executeCommand('vscode.openWith', uri, type);
-    }
-
 }
