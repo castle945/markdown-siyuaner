@@ -4,9 +4,12 @@ import { basename, isAbsolute, parse, resolve } from 'path';
 import * as vscode from 'vscode';
 import { Handler } from '../common/handler';
 import { Util } from '../common/util';
-import { MarkdownService, Holder } from '../service/markdownService';
 import { Global } from '@/common/global';
 import { platform } from 'os';
+
+export class Holder{
+    public static activeDocument:vscode.TextDocument|null;
+}
 
 export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -116,15 +119,6 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         }).on("scroll", ({ scrollTop }) => {
             // 处理滚动事件，用户滚动、页面加载自动滚动时触发，scrollTop 参数保存之前滚动的位置并以文档路径作为键名
             this.state.update(`scrollTop_${document.uri.fsPath}`, scrollTop)
-        }).on("img", async (img) => {
-            // Webview 内部处理图片上传或接收图片数据时触发
-            const { relPath, fullPath } = adjustImgPath(uri)
-            const imagePath = isAbsolute(fullPath) ? fullPath : `${resolve(uri.fsPath, "..")}/${relPath}`.replace(/\\/g, "/");
-            writeFileSync(imagePath, Buffer.from(img, 'binary'))
-            const fileName = parse(relPath).name;
-            const adjustRelPath = await MarkdownService.imgExtGuide(imagePath, relPath);
-            vscode.env.clipboard.writeText(`![${fileName}](${adjustRelPath})`)
-            vscode.commands.executeCommand("editor.action.clipboardPasteAction")
         }).on("quickOpen", () => {
             vscode.commands.executeCommand('workbench.action.quickOpen');
         }).on("editInVSCode", (full: boolean) => {

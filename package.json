@@ -8,40 +8,14 @@
 	"engines": {
 		"vscode": "^1.64.0"
 	},
-
-	"keywords": ["markdown"],
-	"categories": [
-		"Visualization",
-		"Other"
-	],
-	"bugs": {
-		"url": "https://github.com/castle945/markdown-siyuaner/issues",
-		"email": "cweijan@163.com"
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/castle945/markdown-siyuaner"
 	},
 	
-	"activationEvents": [
-		"onStartupFinished"
-	],
+	"activationEvents": ["onStartupFinished"],
 	"main": "./out/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "office.markdown.paste",
-				"title": "Enhance pater in markdown"
-			}
-		],
-		"keybindings": [
-			{
-				"command": "office.markdown.paste",
-				"key": "ctrl+v",
-				"mac": "cmd+v",
-				"when": "!terminalFocus && !filesExplorerFocus && resourceLangId == markdown"
-			}
-		],
 		"customEditors": [
 			{
 				"viewType": "cweijan.markdownViewer",
@@ -57,20 +31,10 @@
 			"type": "object",
 			"title": "Office",
 			"properties": {
-				"vscode-office.viewAbsoluteLocal": {
-					"type": "boolean",
-					"default": false,
-					"description": "Support view absolute path image from markdown viewer."
-				},
 				"vscode-office.openOutline": {
 					"type": "boolean",
 					"default": true,
 					"description": "Open markdown outline."
-				},
-				"vscode-office.hideToolbar": {
-					"type": "boolean",
-					"default": false,
-					"description": "Hide markdown toolbar."
 				},
 				"vscode-office.previewCode": {
 					"type": "boolean",
@@ -122,11 +86,6 @@
 					],
 					"default": "en_US",
 					"description": "You could change your editor language."
-				},
-				"vscode-office.workspacePathAsImageBasePath": {
-					"type": "boolean",
-					"default": false,
-					"description": "Using workspace path as markdown image base path."
 				},
 				"vscode-office.pasterImgPath": {
 					"type": "string",
