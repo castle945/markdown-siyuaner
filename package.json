@@ -1,10 +1,16 @@
 {
   "name": "markdown-siyuaner",
   "displayName": "Markdown-SiYuaner",
-  "description": "",
+  "description": "一名思源笔记用户的自用 Markdown 插件",
   "version": "0.0.1",
+  "publisher": "city945",
   "engines": {
-    "vscode": "^1.96.0"
+    "vscode": "^1.64.0"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/castle945/markdown-siyuaner"
   },
   "categories": [
     "Other"
@@ -31,7 +37,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.96.0",
+    "@types/vscode": "^1.64.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
