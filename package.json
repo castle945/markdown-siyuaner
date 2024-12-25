@@ -2,12 +2,13 @@
   "name": "markdown-siyuaner",
   "displayName": "Markdown-SiYuaner",
   "description": "一名思源笔记用户的自用 Markdown 插件",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "publisher": "city945",
   "icon": "assets/icon.png",
   "engines": {
     "vscode": "^1.64.0"
   },
+  "keywords": ["markdown", "typora", "siyuan", "思源"],
 
   "repository": {
     "type": "git",
@@ -35,6 +36,7 @@
     "lint": "eslint src --fix",
     "build": "webpack",
     "start": "webpack serve --config webpack.start.js",
+    "watch": "webpack --watch",
     "package": "vsce package",
     "publish": "vsce publish"
   },
