@@ -79,24 +79,6 @@ export async function getToolbar(resPath) {
                 handler.emit("editInVSCode", true)
             }
         },
-        {
-            tipPosition: 's',
-            tip: `Quick open`,
-            className: 'right',
-            icon: await loadRes(`${resPath}/icon/codicon-files.svg`),
-            click() {
-                handler.emit("quickOpen", true)
-            }
-        },
-        {
-            tipPosition: 's',
-            tip: 'Export To Pdf',
-            className: 'right',
-            icon: await loadRes(`${resPath}/icon/pdf.svg`),
-            click() {
-                handler.emit("export")
-            }
-        },
         { name: 'upload', tipPosition: 'e' },
         "|",
         {
