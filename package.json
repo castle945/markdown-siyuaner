@@ -30,7 +30,37 @@
           }
         ]
       }
-    ]
+    ],
+    "commands": [
+      {
+        "command": "siyuaner.markdown.switch",
+        "title": "Switch Markdown Editor",
+        "icon": {
+          "dark": "assets/switch.svg",
+          "light": "assets/switch_light.svg"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+				{
+					"command": "siyuaner.markdown.switch",
+					"when": "resourceExtname == '.md'",
+					"group": "navigation@-1"
+				}
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Markdown-SiYuaner",
+      "properties": {
+        "markdown-siyuaner.imageSavePath": {
+          "type": "string",
+          "default": "${workspaceDir}/assets/${fileName}-${now}.png",
+          "description": "截图粘贴或上传图片时，保存图片的路径"
+        }
+      }
+    }
   },
   "scripts": {
     "lint": "eslint src --fix",

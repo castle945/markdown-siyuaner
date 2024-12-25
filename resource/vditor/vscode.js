@@ -39,5 +39,20 @@ window.handler.on("open", async (extparam) => {
         input(content) {
             handler.emit("save", content)
         },
+        upload: {
+            accept: 'image/*',
+            // 在 vditor 代码库中搜索 options.upload 可以查找到相关的处理函数，包括 handler(fileList) file(fileList) filename(name) 等
+            // 截图和上传的图片数据都会由此函数进行处理
+            handler(fileList) {
+                for (let i = 0; i < fileList.length; i++) {
+                    let reader = new FileReader();
+                    // reader.readAsBinaryString(fileList[i]); // 此 API 即将废弃
+                    reader.readAsArrayBuffer(fileList[i]);
+                    reader.onloadend = () => {
+                        handler.emit("uploadOrPasteImage", reader.result)
+                    };
+                }
+            }
+        },
     })
 }).emit("init")

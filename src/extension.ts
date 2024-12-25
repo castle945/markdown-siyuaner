@@ -8,7 +8,17 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		// 注册自定义编辑器
 		vscode.window.registerCustomEditorProvider("siyuaner.markdownViewer", new MarkdownEditorProvider(context), viewOption),
+		// 注册命令
+		vscode.commands.registerCommand('siyuaner.markdown.switch', (uri) => { switchEditor(uri) }),
 	);
 }
 
 export function deactivate() {}
+
+// 切换 Markdown 编辑器
+function switchEditor(uri: vscode.Uri) {
+	const editor = vscode.window.activeTextEditor;
+	if (!uri) uri = editor?.document.uri;
+	const type = editor ? 'siyuaner.markdownViewer' : 'default';
+	vscode.commands.executeCommand('vscode.openWith', uri, type);
+}

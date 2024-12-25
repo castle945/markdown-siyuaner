@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { getFolders, buildPath } from './utils/common';
+import { getFolders, buildPath, parseImageSavePath } from './utils/common';
 import { Handler } from './utils/handler';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 
 export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private extensionPath: string;
@@ -22,6 +22,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         };
         
         const contextPath = `${this.extensionPath}/resource/vditor`; // 设置资源路径，指向插件资源目录下的 vditor 文件夹
+        const config = vscode.workspace.getConfiguration("markdown-siyuaner"); // 获取插件配置，见 package.json
         const handler = Handler.bind(webviewPanel, uri); // Handler 实例，用于和 webview 通信，向其发射事件
         // 设置各种事件的钩子函数，由 webview 中的 window.handler 发射相应事件时触发
         handler.on("init", () => {
@@ -33,6 +34,12 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             const edit = new vscode.WorkspaceEdit();
             edit.replace(document.uri, new vscode.Range(0, 0, document.lineCount, 0), newContent);
             vscode.workspace.applyEdit(edit);
+        }).on("uploadOrPasteImage", async (image) => {
+            // 保存 webview 获取到的图片数据到指定目录
+            const { fileName, relPath, fullPath } = parseImageSavePath(uri, config.get<string>('imageSavePath'));
+            writeFileSync(fullPath, Buffer.from(image, 'binary'));
+            vscode.env.clipboard.writeText(`![${fileName}](${relPath})`)
+            vscode.commands.executeCommand("editor.action.clipboardPasteAction")
         })
 
         // 设置 webview 页面为 resource/vditor/index.html
