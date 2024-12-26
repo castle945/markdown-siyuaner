@@ -58,6 +58,23 @@
           "type": "string",
           "default": "${workspaceDir}/assets/${fileName}-${now}.png",
           "description": "截图粘贴或上传图片时，保存图片的路径"
+        },
+        "markdown-siyuaner.showOutline": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否显示大纲"
+        },
+        "markdown-siyuaner.editorContentTheme": {
+          "type": "string",
+          "enum": ["light", "dark", "ant-design"],
+          "default": "light",
+          "markdownDescription": "编辑器默认主题"
+        },
+        "markdown-siyuaner.codeTheme": {
+          "type": "string",
+          "enum": ["atom-one-dark", "vs", "github", "googlecode", "idea"],
+          "default": "atom-one-dark",
+          "markdownDescription": "代码块默认主题"
         }
       }
     }

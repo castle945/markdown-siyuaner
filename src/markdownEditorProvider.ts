@@ -28,7 +28,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         handler.on("init", () => {
             // 向 webview 发射一个 open 事件，携带一些参数，包括当前文档内容
             handler.emit("open", {
-                content: document.getText(),
+                content: document.getText(), config, 
             })
         }).on("save", (newContent) => {
             const edit = new vscode.WorkspaceEdit();
@@ -40,6 +40,20 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             writeFileSync(fullPath, Buffer.from(image, 'binary'));
             vscode.env.clipboard.writeText(`![${fileName}](${relPath})`)
             vscode.commands.executeCommand("editor.action.clipboardPasteAction")
+        }).on("openLink", (uri: string) => {
+            // webview 发送该事件时触发，调用 API 打开链接
+            const resReg = /^https:\/\/\S+\.net(\/|$)/; // VSCode 打开的工作区文件都是以 https://*.net 模式的
+            if (uri.match(resReg)) {
+                const localPath = uri.replace(resReg, '/')
+                vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(localPath));
+            } else {
+                // 否则为外部链接，直接调用 API 打开
+                vscode.env.openExternal(vscode.Uri.parse(uri));
+            }
+        }).on("saveToolbarToConfig", (param) => {
+            // 保存大纲等设置
+            const { key, value } = param;
+            config.update(key, value, true); // true 表示更新全局设置，false 表示仅更新当前工作区设置
         })
 
         // 设置 webview 页面为 resource/vditor/index.html
