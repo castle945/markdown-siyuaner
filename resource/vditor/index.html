@@ -5,17 +5,11 @@
     <title>Vditor</title>
     <!-- 设置此变量才能显示 markdown 链接的图片 -->
     <base href="{{baseUrl}}/">
-    <style>
-        body {
-            margin: 0;
-            padding: 0 20px;
-        }
-    </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.10.8/dist/index.css">
     <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.8/dist/index.min.js"></script>
 </head>
 <body>
-    <div id="vditor"></div>
+    <div id="vditor" style="margin: 10px 0px;"></div>
 </body>
 <!-- 解注释以作为静态页面调试 -->
 <!-- <script>new Vditor('vditor', {value: '编辑器初始内容', cache: {enable: false}})</script> -->

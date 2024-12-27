@@ -33,7 +33,7 @@ window.handler.on("open", async (extparam) => {
     const { config } = extparam;
     window.editor = new Vditor('vditor', {
         value: extparam.content,
-        height: document.documentElement.clientHeight,
+        height: document.documentElement.clientHeight - 20, // 减去 padding 值
         cache: {
             enable: false,
         },
@@ -76,6 +76,9 @@ window.handler.on("open", async (extparam) => {
             }
         },
     });
+}).on("updateContent", async (content) => {
+    window.editor.setValue(content);
+    handler.emit("save", content);
 }).emit("init") // @! 逻辑的起点，webview.html->此 JS 发射 init 事件，插件 handler 的 init 回调函数中发射 open 事件并携带文档内容等参数，此脚本中的窗口 handler 的 open 回调函数创建 Vditor 实例
 
 
@@ -91,7 +94,6 @@ function getToolbar() {
         "content-theme",
         "code-theme",
         "|",
-        "headings",
         "bold",
         "italic",
         "strike",
@@ -112,9 +114,6 @@ function getToolbar() {
         "|",
         "upload",
         "table",
-        "|",
-        "undo",
-        "redo",
         "|",
         {
             name: "more",

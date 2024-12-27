@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
-import { getFolders, buildPath, parseImageSavePath } from './utils/common';
+import { getFolders, buildPath, parseImageSavePath, getWorkspacePath, getFileNamesFromDirectory } from './utils/common';
 import { Handler } from './utils/handler';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, rename } from 'fs';
+import { dirname, join, parse, relative } from 'path';
 
 export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private extensionPath: string;
+    private handler: Handler; // @! Handler 实例，用于和 webview 通信，向其发射事件，此变量的赋值由于无法在构造函数中进行，有点不常规，但是逻辑上应该没错，resolveCustomTextEditor 要先于其他函数执行
 
     constructor(private context: vscode.ExtensionContext) {
         this.extensionPath = context.extensionPath;
@@ -13,6 +15,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     public resolveCustomTextEditor(document: vscode.TextDocument, webviewPanel: vscode.WebviewPanel, token: vscode.CancellationToken): void | Thenable<void> {
         const uri = document.uri;
         const webview = webviewPanel.webview;
+        this.handler = Handler.bind(webviewPanel, uri); // Handler 实例，用于链式设置事件的钩子函数
 
         webview.options = {
             enableScripts: true, // 允许在 Webview 中执行 JavaScript
@@ -23,11 +26,10 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         
         const contextPath = `${this.extensionPath}/resource/vditor`; // 设置资源路径，指向插件资源目录下的 vditor 文件夹
         const config = vscode.workspace.getConfiguration("markdown-siyuaner"); // 获取插件配置，见 package.json
-        const handler = Handler.bind(webviewPanel, uri); // Handler 实例，用于和 webview 通信，向其发射事件
         // 设置各种事件的钩子函数，由 webview 中的 window.handler 发射相应事件时触发
-        handler.on("init", () => {
+        this.handler.on("init", () => {
             // 向 webview 发射一个 open 事件，携带一些参数，包括当前文档内容
-            handler.emit("open", {
+            this.handler.emit("open", {
                 content: document.getText(), config, 
             })
         }).on("save", (newContent) => {
@@ -36,9 +38,15 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             vscode.workspace.applyEdit(edit);
         }).on("uploadOrPasteImage", async (image) => {
             // 保存 webview 获取到的图片数据到指定目录
-            const { fileName, relPath, fullPath } = parseImageSavePath(uri, config.get<string>('imageSavePath'));
+            const { fileName, fullPath } = parseImageSavePath(uri, config.get<string>('assetsPath'));
+            const curAssetsDir = dirname(fullPath);
+            if (!existsSync(curAssetsDir)) { 
+                if (!existsSync(dirname(curAssetsDir))) mkdirSync(dirname(curAssetsDir)); // mkdirSync 不能递归创建目录
+                mkdirSync(curAssetsDir); 
+            }
             writeFileSync(fullPath, Buffer.from(image, 'binary'));
-            vscode.env.clipboard.writeText(`![${fileName}](${relPath})`)
+            const relPath = relative(dirname(uri.fsPath), fullPath);
+            vscode.env.clipboard.writeText(`![${parse(fileName).base}](${relPath})`)
             vscode.commands.executeCommand("editor.action.clipboardPasteAction")
         }).on("openLink", (uri: string) => {
             // webview 发送该事件时触发，调用 API 打开链接
@@ -64,5 +72,132 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             readFileSync(`${this.extensionPath}/resource/vditor/index.html`, 'utf8')
                 .replace("{{baseUrl}}", baseUrl),
             webview, contextPath);
+    }
+
+    // 切换 Markdown 编辑器
+    public switchEditor(uri: vscode.Uri) {
+        const editor = vscode.window.activeTextEditor;
+        if (!uri) uri = editor?.document.uri;
+        const type = editor ? 'siyuaner.markdownViewer' : 'default';
+        vscode.commands.executeCommand('vscode.openWith', uri, type);
+    }
+    // 当资源目录或当前文档 进行过 移动或重命名时，修复 Markdown 文档中的链接，过程中给出未引用的资源，并根据用户选择进行删除
+    public async fixAssetsLink(uri: vscode.Uri) {
+        vscode.window.showInformationMessage("提示：当资源目录或当前文档 进行过 移动或重命名时，修复 Markdown 文档中的链接，过程中给出未引用的资源，并根据用户选择进行删除，注意只能管理本插件编写时产生的资源");
+
+        // 如果资源目录被移动或重命名，弹窗提示用户输入新资源目录并更新配置
+        const config = vscode.workspace.getConfiguration("markdown-siyuaner"); // 获取插件配置，见 package.json
+        const workspaceDir = getWorkspacePath(uri);
+        let assetsDir = join(workspaceDir, config.get<string>('assetsPath'));
+        if (!existsSync(assetsDir)) {
+            const inputBox1 = await vscode.window.showErrorMessage(
+                "检测到无法找到资源目录\n可能是该目录被移动或重命名", { modal: true }).then(() => {
+                    return vscode.window.showInputBox({
+                        prompt: "请输入相对工作区的相对目录以重新配置",
+                        value: config.get<string>('assetsPath'),
+                        ignoreFocusOut: true, // 当焦点移动到编辑器的另一部分或另一个窗口时, 保持输入框打开
+                    });
+                });
+            if (inputBox1) {
+                assetsDir = join(workspaceDir, inputBox1);
+                if (!existsSync(assetsDir)) {
+                    vscode.window.showErrorMessage("输入的资源目录路径不存在，请重试", { modal: true });
+                    return;
+                } 
+                else await config.update("assetsPath", inputBox1, true);
+            }
+            else return;
+        }
+        // 如果当前文档的资源目录不存在，可能是当前文档的资源目录被移动或当前文档被重命名
+        const assetsPath = config.get<string>('assetsPath');
+        const mdFileName = parse(uri.fsPath).name;
+        let curAssetsDir = join(workspaceDir, assetsPath, mdFileName);
+        if (!existsSync(curAssetsDir)) {
+            const inputBox2 = await vscode.window.showErrorMessage(
+                "检测到无法找到当前文档的资源目录\n可能是当前文档的资源目录被移动或当前文档被重命名\n" + 
+                "可以不输入，手动在工作区调整资源目录\n或者在输入框中输入", { modal: true }).then(() => {
+                    return vscode.window.showInputBox({
+                        prompt: "请输入原文档资源目录相对工作区的相对目录，将移动所给的原文档资源目录",
+                        value: join(assetsPath, mdFileName),
+                        ignoreFocusOut: true, 
+                    });
+                });
+            if (inputBox2) {
+                const oldCurAssetsDir = join(workspaceDir, inputBox2);
+                if (!existsSync(oldCurAssetsDir)) {
+                    vscode.window.showErrorMessage("输入的当前文档的资源目录路径不存在，请重试", { modal: true });
+                    return;
+                } 
+                else rename(oldCurAssetsDir, curAssetsDir, (err) => {
+                    if (err) vscode.window.showErrorMessage("移动当前文档的资源目录失败", { modal: true });
+                });
+            }
+            else return;
+        }
+
+        // 获取文档内容
+        const document = await vscode.workspace.openTextDocument(uri);
+        let content = document.getText(); // 获取到的是实时修改未保存的文档内容
+        // 正则表达式匹配 Markdown 图片链接
+        const imageRegex = /!\[.*?\]\((?!http:\/\/|https:\/\/)(.*?)\)/g;
+        const imageLinks: string[] = []; // 用于存储匹配到的图片链接
+        const imageNames: string[] = []; // 用于存储匹配到的图片链接的文件名，即 UTC 时间戳
+        let match;
+        while ((match = imageRegex.exec(content)) !== null) {
+            imageLinks.push(match[1]); // match[0] 为完整图片链接，match[1] 为小括号内的相对路径
+            imageNames.push(parse(match[1]).name);
+        }
+        // 获取当前文档资源目录所有文件名
+        const fileNames = await getFileNamesFromDirectory(curAssetsDir);
+        // 将 UTC 时间戳视为某个资源的唯一标识进行配对
+        let pairs: [number, number][] = [];
+        let unusedImages: number[] = []; // 未引用的图片索引
+        for (let i = 0; i < fileNames.length; i++) {
+            const basename = parse(fileNames[i]).name;
+            let success = false;
+            for (let j = 0; j < imageNames.length; j++) {
+                if (basename === imageNames[j]) { // === 是严格相等，如何类型不同也不相等，而 == 如果类型不同则会进行类型转换再比较
+                    success = true;
+                    pairs.push([i, j]);
+                    break;
+                }
+            }
+            if (!success) unusedImages.push(i);
+        }
+        // 弹窗提示用户是否删除未引用的资源
+        if (unusedImages.length > 0) {
+            let tips = "未引用文件列表：\n";
+            for (let i = 0; i < unusedImages.length; i++) {
+                tips += fileNames[unusedImages[i]] + "\n";
+            }
+            const result = await vscode.window.showInformationMessage(
+                "检测到当前文档有未引用的资源，是否删除？\n\n" + tips, 
+                { modal: true }, "删除"
+            );
+            if (result === "删除") {
+                for (let i = 0; i < unusedImages.length; i++) {
+                    const filePath = join(curAssetsDir, fileNames[unusedImages[i]]);
+                    try {
+                        await vscode.workspace.fs.delete(vscode.Uri.file(filePath));
+                    } catch (error) {
+                        vscode.window.showErrorMessage("删除文件失败：" + filePath, { modal: true });
+                    }
+                }
+            }
+        }
+        if (pairs.length === 0) return;
+        // 检测文档路径是否被修改
+        const mdRelpath = relative(dirname(uri.fsPath), curAssetsDir); // 链接的相对路径应为此值
+        const curMdRelpath = dirname(imageLinks[pairs[0][1]]); // 实际根据文档内容判断的相对路径
+        if (mdRelpath !== curMdRelpath) vscode.window.showInformationMessage("检测到文档路径被修改，即将修复文档中的链接");
+        // 修复文档中的链接
+        for (let i = 0; i < pairs.length; i++) {
+            const [index, linkIndex] = pairs[i];
+            const oldLink = imageLinks[linkIndex];
+            const newLink = join(mdRelpath, fileNames[index]);
+            content = content.replace(oldLink, newLink);
+        }
+        // 更新文档内容
+        this.handler.emit("updateContent", content);
     }
 }

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { parse, isAbsolute, resolve, dirname } from 'path';
-import { existsSync, mkdirSync } from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 
 // 适配 windows 系统，遍历 A-Z 获取盘符路径 C:/ 等
 export function getFolders(): vscode.Uri[] {
@@ -21,19 +21,13 @@ export function buildPath(data: string, webview: vscode.Webview, contextPath: st
 }
 
 // 解析图片保存路径
-export function parseImageSavePath(uri: vscode.Uri, imageSavePath: string) {
-    const imgPath = imageSavePath.replace("${fileName}", parse(uri.fsPath).name.replace(/\s/g, '')).replace("${now}", new Date().getTime() + "")
-    const relPath = imgPath.replace(/\$\{workspaceDir\}\/?/, '');
-    const fullPath = imgPath.replace("${workspaceDir}", getWorkspacePath(uri));
-    if (!existsSync(dirname(fullPath))) { mkdirSync(dirname(fullPath)); }
-    return {
-        relPath, 
-        fileName: parse(relPath).name, 
-        // 如果配置路径没有使用 ${workspaceDir} 变量，则 fullPath 也是 relPath 故需要转换为绝对路径
-        fullPath: isAbsolute(fullPath) ? fullPath : `${resolve(uri.fsPath, "..")}/${relPath}`.replace(/\\/g, "/")
-    };
+export function parseImageSavePath(uri: vscode.Uri, assetsPath: string) {
+    const fileName = ("${fileName}/${now}.png").replace("${fileName}", path.parse(uri.fsPath).name.replace(/\s/g, '')).replace("${now}", new Date().getTime() + "")
+    const relPath = assetsPath + "/" + fileName;
+    const fullPath = getWorkspacePath(uri) + "/" + relPath;
+    return { fileName, relPath, fullPath };
 }
-function getWorkspacePath(uri: vscode.Uri): string {
+export function getWorkspacePath(uri: vscode.Uri): string {
     const folders = vscode.workspace.workspaceFolders;
     if (!folders || folders.length == 0) return '';
     const workspacePath = folders[0]?.uri?.fsPath;
@@ -45,4 +39,12 @@ function getWorkspacePath(uri: vscode.Uri): string {
         }
     }
     return workspacePath;
+}
+
+// 给定目录路径，获取该目录下所有文件名
+export async function getFileNamesFromDirectory(directoryPath: string) {
+    const filesWithDirs = await fs.promises.readdir(directoryPath, { withFileTypes: true });
+    // 过滤掉子目录
+    const fileNames = filesWithDirs.filter(dirent => dirent.isFile()).map(dirent => dirent.name); // 获取文件名
+    return fileNames;
 }

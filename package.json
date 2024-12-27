@@ -39,6 +39,14 @@
           "dark": "assets/switch.svg",
           "light": "assets/switch_light.svg"
         }
+      },
+      {
+        "command": "siyuaner.markdown.fix",
+        "title": "Fix Assets Link Error And Manage Markdown Assets",
+        "icon": {
+          "dark": "assets/fix.svg",
+          "light": "assets/fix_light.svg"
+        }
       }
     ],
     "menus": {
@@ -47,6 +55,11 @@
 					"command": "siyuaner.markdown.switch",
 					"when": "resourceExtname == '.md'",
 					"group": "navigation@-1"
+				},
+				{
+					"command": "siyuaner.markdown.fix",
+					"when": "resourceExtname == '.md'",
+					"group": "navigation@-2"
 				}
       ]
     },
@@ -54,10 +67,10 @@
       "type": "object",
       "title": "Markdown-SiYuaner",
       "properties": {
-        "markdown-siyuaner.imageSavePath": {
+        "markdown-siyuaner.assetsPath": {
           "type": "string",
-          "default": "${workspaceDir}/assets/${fileName}-${now}.png",
-          "description": "截图粘贴或上传图片时，保存图片的路径"
+          "default": "assets",
+          "description": "截图粘贴或上传图片时，保存图片等资源文件的相对目录"
         },
         "markdown-siyuaner.showOutline": {
           "type": "boolean",
