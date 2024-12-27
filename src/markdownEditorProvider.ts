@@ -7,9 +7,11 @@ import { dirname, join, parse, relative } from 'path';
 export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
     private extensionPath: string;
     private handler: Handler; // @! Handler 实例，用于和 webview 通信，向其发射事件，此变量的赋值由于无法在构造函数中进行，有点不常规，但是逻辑上应该没错，resolveCustomTextEditor 要先于其他函数执行
+    private state: vscode.Memento;
 
     constructor(private context: vscode.ExtensionContext) {
         this.extensionPath = context.extensionPath;
+        this.state = context.globalState;
     }
     // 该类的主逻辑，默认不加也是 public
     public resolveCustomTextEditor(document: vscode.TextDocument, webviewPanel: vscode.WebviewPanel, token: vscode.CancellationToken): void | Thenable<void> {
@@ -26,11 +28,14 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         
         const contextPath = `${this.extensionPath}/resource/vditor`; // 设置资源路径，指向插件资源目录下的 vditor 文件夹
         const config = vscode.workspace.getConfiguration("markdown-siyuaner"); // 获取插件配置，见 package.json
+        const vditorPath = webview.asWebviewUri(vscode.Uri.file(`${contextPath}`)).toString();
         // 设置各种事件的钩子函数，由 webview 中的 window.handler 发射相应事件时触发
         this.handler.on("init", () => {
             // 向 webview 发射一个 open 事件，携带一些参数，包括当前文档内容
+            const scrollTop = this.state.get(`scrollTop_${document.uri.fsPath}`, 0);
             this.handler.emit("open", {
                 content: document.getText(), config, 
+                scrollTop, vditorPath
             })
         }).on("save", (newContent) => {
             const edit = new vscode.WorkspaceEdit();
@@ -62,6 +67,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             // 保存大纲等设置
             const { key, value } = param;
             config.update(key, value, true); // true 表示更新全局设置，false 表示仅更新当前工作区设置
+        }).on("scroll", ({ scrollTop }) => {
+            this.state.update(`scrollTop_${document.uri.fsPath}`, scrollTop);
         })
 
         // 设置 webview 页面为 resource/vditor/index.html

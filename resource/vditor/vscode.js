@@ -3,6 +3,10 @@ const vscode = typeof (acquireVsCodeApi) != "undefined" ? acquireVsCodeApi() : n
 // 封装 postMessage 函数，用于 webview 向 VSCode 插件发送消息
 const postMessage = (message) => { if (vscode) { vscode.postMessage(message) } }
 
+// 当前脚本的全部配置变量
+const padding_height = 20; // 页面高度上的 padding 值之和
+
+
 // 创建空对象，存储事件及其回调函数
 // 将 receive 函数作为 window 的消息事件监听器，receive 函数如果消息不为空，则存储在 events 对象中
 let events = {}
@@ -33,7 +37,7 @@ window.handler.on("open", async (extparam) => {
     const { config } = extparam;
     window.editor = new Vditor('vditor', {
         value: extparam.content,
-        height: document.documentElement.clientHeight - 20, // 减去 padding 值
+        height: document.documentElement.clientHeight - padding_height, // 减去 padding 值
         cache: {
             enable: false,
         },
@@ -46,7 +50,7 @@ window.handler.on("open", async (extparam) => {
         preview: {
             theme: {
                 current: config.editorContentTheme,
-                // path: `${extparam.vditorPath}/css/content-theme`, // 自定义主题路径
+                path: `${extparam.vditorPath}/css/content-theme`, // 自定义主题路径，由于 vditor 默认样式基于网页调的，在 VSCode 中显示有所不同
             },
             hljs: {
                 style: config.codeTheme,
@@ -56,6 +60,7 @@ window.handler.on("open", async (extparam) => {
         after() {
             setLinkClickCallback();
             setToolbarClick(window.editor.vditor.options);
+            setScroll(extparam.scrollTop);
         },
         input(content) {
             handler.emit("save", content)
@@ -169,4 +174,20 @@ function setToolbarClick(options) {
             handler.emit("saveToolbarToConfig", {key: "showOutline", value: options.outline.enable});
         }
     });
+}
+// 复原滚动位置
+function setScroll(top) {
+    document.querySelector(".vditor-reset").addEventListener("scroll", e => {
+        handler.emit("scroll", { scrollTop: e.target.scrollTop })
+    });
+    const scrollHack = setInterval(() => {
+        const editorContainer = document.querySelector(".vditor-reset");
+        if (!editorContainer) return;
+        editorContainer.scrollTo({ top })
+        clearInterval(scrollHack)
+    }, 10);
+}
+// 监听页面大小变化，更新 Vditor 高度
+window.onresize = () => {
+    document.getElementById('vditor').style.height = `${document.documentElement.clientHeight - padding_height}px`
 }
