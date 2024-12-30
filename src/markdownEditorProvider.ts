@@ -69,6 +69,8 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             config.update(key, value, true); // true 表示更新全局设置，false 表示仅更新当前工作区设置
         }).on("scroll", ({ scrollTop }) => {
             this.state.update(`scrollTop_${document.uri.fsPath}`, scrollTop);
+        }).on("fixlink", async ()=> {
+            await this.fixAssetsLink(uri);
         })
 
         // 设置 webview 页面为 resource/vditor/index.html
@@ -83,10 +85,14 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
     // 切换 Markdown 编辑器
     public switchEditor(uri: vscode.Uri) {
+        // 当在 webview 下点击切换按钮时，获取到的 editor 为 undefined 否则在默认编辑器下点击则为 editor 实例
         const editor = vscode.window.activeTextEditor;
-        if (!uri) uri = editor?.document.uri;
         const type = editor ? 'siyuaner.markdownViewer' : 'default';
         vscode.commands.executeCommand('vscode.openWith', uri, type);
+        // 切换编辑器时，切换到默认编辑器能获取到 webview 未保存的编辑，但切换到 webview 时不会更新编辑器内容
+        if (type === 'siyuaner.markdownViewer') {
+            this.handler.emit("updateContent", editor.document.getText());
+        }
     }
     // 当资源目录或当前文档 进行过 移动或重命名时，修复 Markdown 文档中的链接，过程中给出未引用的资源，并根据用户选择进行删除
     public async fixAssetsLink(uri: vscode.Uri) {

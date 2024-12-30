@@ -1,8 +1,8 @@
 {
   "name": "markdown-siyuaner",
   "displayName": "Markdown-SiYuaner",
-  "description": "一名思源笔记用户的自用 Markdown 插件",
-  "version": "0.0.3",
+  "description": "一名思源笔记用户的自用 VSCode Markdown 插件，欢迎大家尝试哦",
+  "version": "0.0.4",
   "publisher": "city945",
   "icon": "assets/icon.png",
   "engines": {
@@ -39,14 +39,6 @@
           "dark": "assets/switch.svg",
           "light": "assets/switch_light.svg"
         }
-      },
-      {
-        "command": "siyuaner.markdown.fix",
-        "title": "Fix Assets Link Error And Manage Markdown Assets",
-        "icon": {
-          "dark": "assets/fix.svg",
-          "light": "assets/fix_light.svg"
-        }
       }
     ],
     "menus": {
@@ -55,11 +47,6 @@
 					"command": "siyuaner.markdown.switch",
 					"when": "resourceExtname == '.md'",
 					"group": "navigation@-1"
-				},
-				{
-					"command": "siyuaner.markdown.fix",
-					"when": "resourceExtname == '.md'",
-					"group": "navigation@-2"
 				}
       ]
     },
@@ -79,15 +66,20 @@
         },
         "markdown-siyuaner.editorContentTheme": {
           "type": "string",
-          "enum": ["light", "dark", "ant-design"],
+          "enum": ["light", "dark", "ant-design", "wechat"],
           "default": "light",
           "markdownDescription": "编辑器默认主题"
         },
         "markdown-siyuaner.codeTheme": {
           "type": "string",
-          "enum": ["atom-one-dark", "vs", "github", "googlecode", "idea"],
-          "default": "atom-one-dark",
+          "enum": ["atom-one-dark-reasonable", "vs", "github", "googlecode", "idea"],
+          "default": "atom-one-dark-reasonable",
           "markdownDescription": "代码块默认主题"
+        },
+        "markdown-siyuaner.showWideScreen": {
+          "type": "boolean",
+          "default": false,
+          "description": "是否启用宽屏模式"
         }
       }
     }
