@@ -1,30 +1,3 @@
-/*!
- * Vditor - A markdown editor written in TypeScript.
- *
- * MIT License
- *
- * Copyright (c) 2018-present B3log 开源, b3log.org
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- */
-
 .vditor-reset {
     color: rgba(0, 0, 0, .85);
     font-size: 14px;
@@ -98,7 +71,7 @@
 .vditor-reset ul > li {
     margin-left: 20px;
     padding-left: 4px;
-    list-style-type: circle;
+    list-style-type: disc;
 }
 
 .vditor-reset ol > li {
@@ -124,6 +97,10 @@
 .vditor-reset code:not(.hljs):not(.highlight-chroma) {
     background: #f2f4f5;
     color: rgba(0, 0, 0, .65);
+}
+.vditor-wysiwyg code[data-marker="`"] {
+    padding-left: 0.5em !important;
+    padding-right: 0.5em !important;
 }
 
 .vditor-reset pre {
@@ -170,15 +147,10 @@
 }
 
 .vditor-reset blockquote {
-    margin: 1em 0;
-    padding-left: .8em;
-    color: rgba(0, 0, 0, .45);
-    font-size: 90%;
-    border-left: 4px solid #f0f0f0
-}
-
-.vditor-reset blockquote p {
-    margin: 0;
+    color: #707278;
+    background-color: #e4e4e4;
+    border-left: .25em solid #bbbbbb;
+    padding: 0.5em 1em;
 }
 
 .vditor-reset .vditor-anchor {

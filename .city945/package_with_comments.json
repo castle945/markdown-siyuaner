@@ -1,11 +1,13 @@
+// 配置字段表格参考: https://liiked.github.io/VS-Code-Extension-Doc-ZH/#/references/extension-manifest
 {
   "name": "markdown-siyuaner",
   "displayName": "Markdown-SiYuaner",
   "description": "一名思源笔记用户的自用 VSCode Markdown 插件，欢迎大家尝试哦",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "publisher": "city945",
   "icon": "assets/icon.png",
   "engines": {
+    // 至少需要的 VS Code 版本
     "vscode": "^1.64.0"
   },
   "keywords": ["markdown", "typora", "siyuan", "思源"],
@@ -17,6 +19,7 @@
   "categories": [
     "Other"
   ],
+  // 当下列事件发生时激活插件，如果不定义则只在用户手动运行注册功能时触发
   "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
@@ -35,6 +38,7 @@
       {
         "command": "siyuaner.markdown.switch",
         "title": "Switch Markdown Editor",
+        // 标签页右侧添加按钮图标，点击按钮触发命令
         "icon": {
           "dark": "assets/switch.svg",
           "light": "assets/switch_light.svg"
@@ -46,6 +50,7 @@
 				{
 					"command": "siyuaner.markdown.switch",
 					"when": "resourceExtname == '.md'",
+          // 标签页右侧图标按钮，在本插件所有图标中的相对顺序，0 为中间
 					"group": "navigation@-1"
 				}
       ]
