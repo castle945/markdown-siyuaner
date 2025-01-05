@@ -2,7 +2,7 @@
   "name": "markdown-siyuaner",
   "displayName": "Markdown-SiYuaner",
   "description": "一名思源笔记用户的自用 VSCode Markdown 插件，欢迎大家尝试哦",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "publisher": "city945",
   "icon": "assets/icon.png",
   "engines": {
@@ -89,7 +89,7 @@
     "build": "webpack",
     "start": "webpack serve --config webpack.start.js",
     "watch": "webpack --watch",
-    "package": "vsce package",
+    "package": "rm -rf dist && npm run build && vsce package",
     "publish": "vsce publish"
   },
   "devDependencies": {

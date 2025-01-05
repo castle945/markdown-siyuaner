@@ -234,6 +234,17 @@ function getToolbarWide() {
 const keys = ['{', '[', '(', '\'', '"']; // 分别对应 [{ '" 9(
 const keyMapping = {'{': '}', '[': ']', '(': ')', '\'' : '\'', '"': '"'};
 function isCompose(e) { return e.metaKey || e.ctrlKey; } // 检查是否为组合键
+// 将浏览器端的 document.execCommand 方法重写并赋值为此处 Node 端的 document.execCommand 方法，只有这样剪切才有效
+let _exec = document.execCommand.bind(document); // 绑定原 API 使得可以调用原方法
+document.execCommand = (cmd, ...args) => {
+    if (cmd === 'delete') {
+        setTimeout(() => {
+            return _exec(cmd, ...args)
+        })
+    } else {
+        return _exec(cmd, ...args)
+    }
+}
 window.addEventListener('keydown', async (e) => {
     if (isCompose(e)) {
         // vditor 不支持 cmd+shift+v 粘贴

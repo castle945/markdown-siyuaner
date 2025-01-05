@@ -51,7 +51,14 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
             writeFileSync(fullPath, Buffer.from(image, 'binary'));
             const relPath = relative(dirname(uri.fsPath), fullPath);
-            vscode.env.clipboard.writeText(`![${parse(fileName).base}](${relPath})`)
+            const mdImgTxt = `![${parse(fileName).base}](${relPath})`;
+            vscode.env.clipboard.writeText(mdImgTxt);
+            vscode.env.clipboard.readText().then(
+                clipText => {
+                    // code-server 中 clipboard.writeText 会失效，弹出一个提示信息显示图片链接，凑合用吧
+                    if (clipText !== mdImgTxt) vscode.window.showInformationMessage(mdImgTxt);
+                }
+              );
             vscode.commands.executeCommand("editor.action.clipboardPasteAction")
         }).on("openLink", (uri: string) => {
             // webview 发送该事件时触发，调用 API 打开链接

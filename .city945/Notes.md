@@ -4,6 +4,10 @@
 
 - 教程：[VS-Code-Extension-Doc-ZH](https://liiked.github.io/VS-Code-Extension-Doc-ZH/#/get-started/your-first-extension)  [vscode-extension-samples](https://github.com/microsoft/vscode-extension-samples) [b3log-index](https://github.com/Vanessa219/b3log-index)
 - .vsix 本质上就是 zip 压缩包，可以改后缀名解压查看内容文件结构
+- 关于 Web Extension 的开发 [ [教程](https://code.visualstudio.com/api/extension-guides/web-extensions#develop-a-web-extension) ]
+  - 在 github.dev 中正常工作的 Web Extension (往往是主题等没什么代码的插件) 采用的是浏览器端的 JS API，而桌面端插件采用的是 Node.js 及相关库，浏览器端往往缺失很多基本的库，两者代码不兼容
+  - `yo code` 时选择 Web Extension 模板，调试时，只有  `chromium` 是可用的，其他 browserType 都不行
+  - 私有部署的 code-server 支持桌面端插件，但是它使用社区源 [ [1](https://github.com/coder/code-server/discussions/2345) ]，需要再遵循 [教程](https://github.com/eclipse/openvsx/wiki/Publishing-Extensions) 将插件上传到 [open-vsx](https://open-vsx.org)
 
 #### demo0001-HelloWorld [ [1](https://juejin.cn/post/7121381959883816968) ]
 
