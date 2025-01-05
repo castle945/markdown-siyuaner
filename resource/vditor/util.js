@@ -54,69 +54,6 @@ export const hotKeys = [
     },
 ]
 
-function loadRes(url) {
-    return fetch(url).then(r => r.text())
-}
-
-const isMac = navigator.userAgent.includes('Mac OS');
-const shortcutTip = isMac ? '⌘ ^ E' : 'Ctrl Alt E';
-
-export async function getToolbar(resPath) {
-    return [
-        'outline',
-        "headings",
-        "bold",
-        "italic",
-        "strike",
-        "link",
-        "|",
-        {
-            tipPosition: 's',
-            tip: `Edit In VSCode (${shortcutTip})`,
-            className: 'right',
-            icon: await loadRes(`${resPath}/icon/vscode.svg`),
-            click() {
-                handler.emit("editInVSCode", true)
-            }
-        },
-        { name: 'upload', tipPosition: 'e' },
-        "|",
-        {
-            name: 'selectTheme',
-            tipPosition: 's', tip: 'Select Theme',
-            icon: 'Theme:',
-            click() {
-                handler.emit("theme")
-            }
-        },
-        {
-            tipPosition: 's', tip: 'Select Theme',
-            icon: await loadRes(`${resPath}/icon/theme.svg`),
-            click() {
-                handler.emit("theme")
-            }
-        },
-        "|",
-        // "edit-mode",  // 屏蔽掉, 现版本都是针对一种模式优化
-        "code-theme",
-        // "|",
-        "list",
-        "ordered-list",
-        "check",
-        "table",
-        "|",
-        "quote",
-        "line",
-        "code",
-        "inline-code",
-        "|",
-        "undo",
-        "redo",
-        "|",
-        "preview",
-        "help",
-    ]
-}
 
 /**
  * 针对wysiwyg和ir两种模式对超链接做不同的处理
@@ -268,72 +205,7 @@ function matchShortcut(hotkey, event) {
 }
 
 
-/**
- * 自动补全符号
- */
-// const keys = ['"', "{", "("];
-const keyCodes = [222, 219, 57];
 export const autoSymbol = (handler, editor, config) => {
-    let _exec = document.execCommand.bind(document)
-    document.execCommand = (cmd, ...args) => {
-        if (cmd === 'delete') {
-            setTimeout(() => {
-                return _exec(cmd, ...args)
-            })
-        } else {
-            return _exec(cmd, ...args)
-        }
-    }
-    window.addEventListener('keydown', async e => {
-        if (matchShortcut('^⌘e', e) || matchShortcut('^!e', e)) {
-            e.stopPropagation();
-            e.preventDefault();
-            return handler.emit("editInVSCode", true);
-        }
-
-        if (isMac && config.preventMacOptionKey && e.altKey && e.shiftKey && ['Digit1', 'Digit2', 'KeyW'].includes(e.code)) {
-            return e.preventDefault();
-        }
-        if (e.code == 'F12') return handler.emit('developerTool')
-        if (isCompose(e)) {
-            if (e.altKey && isMac) {
-                e.preventDefault()
-            }
-            switch (e.code) {
-                case 'KeyS':
-                    vscodeEvent.emit("doSave", editor.getValue());
-                    e.stopPropagation();
-                    e.preventDefault();
-                    break;
-                case 'KeyV':
-                    if (e.shiftKey) {
-                        const text = await navigator.clipboard.readText();
-                        if (text) document.execCommand('insertText', false, text.trim());
-                        e.stopPropagation();
-                    }
-                    else if (document.getSelection()?.toString()) {
-                        // 修复剪切后选中文本没有被清除
-                        document.execCommand("delete")
-                    }
-                    e.preventDefault();
-                    break;
-            }
-        }
-        if (!keyCodes.includes(e.keyCode)) return;
-        const selectText = document.getSelection().toString();
-        if (selectText != "") { return; }
-        if (e.key == '(') {
-            document.execCommand('insertText', false, ')');
-            document.getSelection().modify('move', 'left', 'character')
-        } else if (e.key == '{') {
-            document.execCommand('insertText', false, '}');
-            document.getSelection().modify('move', 'left', 'character')
-        } else if (e.key == '"') {
-            document.execCommand('insertText', false, e.key);
-            document.getSelection().modify('move', 'left', 'character')
-        }
-    }, isMac ? true : undefined)
-
     window.onresize = () => {
         document.getElementById('vditor').style.height = `${document.documentElement.clientHeight}px`
     }
