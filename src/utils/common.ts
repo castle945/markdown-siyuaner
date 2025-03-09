@@ -23,9 +23,9 @@ export function buildPath(data: string, webview: vscode.Webview, contextPath: st
 // 解析图片保存路径
 export function parseImageSavePath(uri: vscode.Uri, assetsPath: string) {
     const fileName = ("${fileName}/${now}.png").replace("${fileName}", path.parse(uri.fsPath).name.replace(/\s/g, '')).replace("${now}", new Date().getTime() + "")
-    const relPath = assetsPath + "/" + fileName;
-    const fullPath = getWorkspacePath(uri) + "/" + relPath;
-    return { fileName, relPath, fullPath };
+    const parsedAssetsDir = assetsPath.replace("${workspaceFolder}", getWorkspacePath(uri)).replace("${documentFolder}", path.parse(uri.fsPath).dir)
+    const fullPath = parsedAssetsDir + "/" + fileName;
+    return { fileName, fullPath };
 }
 export function getWorkspacePath(uri: vscode.Uri): string {
     const folders = vscode.workspace.workspaceFolders;
