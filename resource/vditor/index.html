@@ -3,10 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <title>Vditor</title>
-    <!-- 设置此变量才能显示 markdown 链接的图片 -->
-    <base href="{{baseUrl}}/">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.10.8/dist/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.8/dist/index.min.js"></script>
+    <base href="{{baseUrl}}/"> <!-- 劫持页面上所有相对 URL 的解析基准，设置此变量才能显示 markdown 链接的图片 -->
+
+    <!-- @! 从网络端获取 vditor 使用 -->
+    <!-- <link rel="stylesheet" href="https://unpkg.com/vditor@3.10.8/dist/index.css"> -->
+    <!-- <script src="https://unpkg.com/vditor@3.10.8/dist/index.min.js"></script> -->
+    <!-- @! 从本地目录获取 vditor 使用，还需添加 vscode.js 中 new Vditor() 时的 cdn 参数-->
+    <link rel="stylesheet" href="dist/index.css">
+    <script src="dist/index.min.js"></script>
 </head>
 <body>
     <div id="vditor" style="margin: 10px 0px;"></div>

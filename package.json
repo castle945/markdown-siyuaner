@@ -2,7 +2,7 @@
   "name": "markdown-siyuaner",
   "displayName": "Markdown-SiYuaner",
   "description": "一名思源笔记用户的自用 VSCode Markdown 插件，欢迎大家尝试哦",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "city945",
   "icon": "assets/icon.png",
   "engines": {
@@ -67,7 +67,7 @@
         },
         "markdown-siyuaner.editorContentTheme": {
           "type": "string",
-          "enum": ["light", "dark", "ant-design", "wechat"],
+          "enum": ["light"],
           "default": "light",
           "markdownDescription": "编辑器默认主题"
         },

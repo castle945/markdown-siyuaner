@@ -15,9 +15,16 @@
 ### 安装
 
 ```bash
+# 在 docker 中运行
+docker pull city945/markdown-siyuaner
+docker run -itd --ipc=host --network=host -v /home/city945/workspace:/workspace -v /datasets:/datasets --name markdown-siyuaner city945/markdown-siyuaner bash
+
+# 如要将 vditor 打包进插件以离线使用，则先下载，详见 resource/vditor/vscode.js
+cd resource/vditor && mkdir dist && cd dist && curl -sL https://registry.npmjs.org/vditor/-/vditor-3.10.8.tgz | tar -xz --strip-components=2 "package/dist"
+
 npm install
 npm run build
-# F5 启动调试，打开带 md 文件的文件夹
+# F5 启动调试，打开带 md 文件的文件夹，在 src/ 下的插件代码中打断点
 npm run package # 打包插件
 ```
 
