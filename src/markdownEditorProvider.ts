@@ -44,11 +44,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         }).on("uploadOrPasteImage", async (image) => {
             // 保存 webview 获取到的图片数据到指定目录
             const { fileName, fullPath } = parseImageSavePath(uri, config.get<string>('assetsPath'));
-            const curAssetsDir = dirname(fullPath);
-            if (!existsSync(curAssetsDir)) { 
-                if (!existsSync(dirname(curAssetsDir))) mkdirSync(dirname(curAssetsDir)); // mkdirSync 不能递归创建目录
-                mkdirSync(curAssetsDir); 
-            }
+            if (!existsSync(dirname(fullPath))) mkdirSync(dirname(fullPath), { recursive: true });
             writeFileSync(fullPath, Buffer.from(image, 'binary'));
             const relPath = relative(dirname(uri.fsPath), fullPath);
             const mdImgTxt = `![${parse(fileName).base}](${relPath})`;
@@ -101,26 +97,33 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             this.handler.emit("updateContent", editor.document.getText());
         }
     }
-    // 当资源目录或当前文档 进行过 移动或重命名时，修复 Markdown 文档中的链接，过程中给出未引用的资源，并根据用户选择进行删除
+    // 修复 Markdown 文档中的链接，删除未引用的资源
     public async fixAssetsLink(uri: vscode.Uri) {
-        vscode.window.showInformationMessage("提示：当资源目录或当前文档 进行过 移动或重命名时，修复 Markdown 文档中的链接，过程中给出未引用的资源，并根据用户选择进行删除，注意只能管理本插件编写时产生的资源");
+        vscode.window.showInformationMessage("提示: 修复 Markdown 文档中的链接，当资源目录移动、重命名 或 当前文档移动时使用");
+        vscode.window.showInformationMessage("提示: 删除未引用的资源，仅限本插件生成的图片即 fileName/now.png 格式");
 
-        // 如果资源目录被移动或重命名，弹窗提示用户输入新资源目录并更新配置
+        // @# 如果找不到 [assetsPath: 资源目录]，可能其被移动或重命名，弹窗提示用户输入资源目录新路径并更新配置
         const config = vscode.workspace.getConfiguration("markdown-siyuaner"); // 获取插件配置，见 package.json
         const workspaceDir = getWorkspacePath(uri);
-        let assetsDir = join(workspaceDir, config.get<string>('assetsPath'));
-        if (!existsSync(assetsDir)) {
+        const assetsPath = config.get<string>('assetsPath');
+        let parsedAssetsDir = assetsPath.replace("${workspaceFolder}", workspaceDir).replace("${documentFolder}", parse(uri.fsPath).dir);
+        if (assetsPath.startsWith("${documentFolder}") && !existsSync(parsedAssetsDir)) {
+            // 特殊情况处理，当以 ${workspaceFolder} 开头时，资源目录路径可以不存在，从而切换到工作区中任何目录
+            // 但当 ${documentFolder} 此路径开头时，资源目录路径必须存在，因为文档当前路径，没有可切换的选项，除非手动新建该路径
+            mkdirSync(parsedAssetsDir, { recursive: true });
+        }
+        if (!existsSync(parsedAssetsDir)) {
             const inputBox1 = await vscode.window.showErrorMessage(
                 "检测到无法找到资源目录\n可能是该目录被移动或重命名", { modal: true }).then(() => {
                     return vscode.window.showInputBox({
-                        prompt: "请输入相对工作区的相对目录以重新配置",
+                        prompt: "请输入资源目录新路径以重新配置，支持变量 ${workspaceFolder} ${documentFolder}",
                         value: config.get<string>('assetsPath'),
                         ignoreFocusOut: true, // 当焦点移动到编辑器的另一部分或另一个窗口时, 保持输入框打开
                     });
                 });
             if (inputBox1) {
-                assetsDir = join(workspaceDir, inputBox1);
-                if (!existsSync(assetsDir)) {
+                parsedAssetsDir = inputBox1.replace("${workspaceFolder}", workspaceDir).replace("${documentFolder}", parse(uri.fsPath).dir);
+                if (!existsSync(parsedAssetsDir)) {
                     vscode.window.showErrorMessage("输入的资源目录路径不存在，请重试", { modal: true });
                     return;
                 } 
@@ -128,22 +131,21 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
             else return;
         }
-        // 如果当前文档的资源目录不存在，可能是当前文档的资源目录被移动或当前文档被重命名
-        const assetsPath = config.get<string>('assetsPath');
-        const mdFileName = parse(uri.fsPath).name;
-        let curAssetsDir = join(workspaceDir, assetsPath, mdFileName);
+        // @# 如果当前文档的资源目录不存在，可能是当前文档的资源目录被移动或当前文档被重命名
+        const mdFileName = parse(uri.fsPath).name.replace(/\s/g, '');
+        let curAssetsDir = join(parsedAssetsDir, mdFileName);
         if (!existsSync(curAssetsDir)) {
             const inputBox2 = await vscode.window.showErrorMessage(
                 "检测到无法找到当前文档的资源目录\n可能是当前文档的资源目录被移动或当前文档被重命名\n" + 
                 "可以不输入，手动在工作区调整资源目录\n或者在输入框中输入", { modal: true }).then(() => {
                     return vscode.window.showInputBox({
-                        prompt: "请输入原文档资源目录相对工作区的相对目录，将移动所给的原文档资源目录",
-                        value: join(assetsPath, mdFileName),
+                        prompt: "请输入原来的文档资源目录，将移动此目录",
+                        value: join(config.get<string>('assetsPath'), mdFileName),
                         ignoreFocusOut: true, 
                     });
                 });
             if (inputBox2) {
-                const oldCurAssetsDir = join(workspaceDir, inputBox2);
+                const oldCurAssetsDir = inputBox2.replace("${workspaceFolder}", workspaceDir).replace("${documentFolder}", parse(uri.fsPath).dir);
                 if (!existsSync(oldCurAssetsDir)) {
                     vscode.window.showErrorMessage("输入的当前文档的资源目录路径不存在，请重试", { modal: true });
                     return;
@@ -169,7 +171,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         }
         // 获取当前文档资源目录所有文件名
         const fileNames = await getFileNamesFromDirectory(curAssetsDir);
-        // 将 UTC 时间戳视为某个资源的唯一标识进行配对
+        // @# 将 UTC 时间戳视为某个资源的唯一标识进行配对，对于每个资源文件，遍历所有图片链接，如果没有匹配到则认为其未引用
         let pairs: [number, number][] = [];
         let unusedImages: number[] = []; // 未引用的图片索引
         for (let i = 0; i < fileNames.length; i++) {
@@ -184,7 +186,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
             if (!success) unusedImages.push(i);
         }
-        // 弹窗提示用户是否删除未引用的资源
+        // @# 弹窗提示用户是否删除未引用的资源
         if (unusedImages.length > 0) {
             let tips = "未引用文件列表：\n";
             for (let i = 0; i < unusedImages.length; i++) {
@@ -206,6 +208,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
             }
         }
         if (pairs.length === 0) return;
+        // @# 如果存在有效链接和资源对，则进行链接修复
         // 检测文档路径是否被修改
         const mdRelpath = relative(dirname(uri.fsPath), curAssetsDir); // 链接的相对路径应为此值
         const curMdRelpath = dirname(imageLinks[pairs[0][1]]); // 实际根据文档内容判断的相对路径

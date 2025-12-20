@@ -2,7 +2,7 @@
   "name": "markdown-siyuaner",
   "displayName": "Markdown-SiYuaner",
   "description": "一名思源笔记用户的自用 VSCode Markdown 插件，欢迎大家尝试哦",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "city945",
   "icon": "assets/icon.png",
   "engines": {
@@ -56,8 +56,9 @@
       "properties": {
         "markdown-siyuaner.assetsPath": {
           "type": "string",
-          "default": "assets",
-          "description": "截图粘贴或上传图片时，保存图片等资源文件的相对目录"
+          "enum": ["${workspaceFolder}/assets", "${documentFolder}/assets"],
+          "default": "${workspaceFolder}/assets",
+          "description": "截图粘贴或上传图片时，保存图片等资源文件的路径，可输入绝对路径，支持变量 ${workspaceFolder} ${documentFolder}"
         },
         "markdown-siyuaner.showOutline": {
           "type": "boolean",
